@@ -1,0 +1,77 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.container {
+  background-color: #e3e4e5;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.tab-card {
+  width: auto;
+  height: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 1px;
+}
+
+.tab-wrapper {
+  margin-left: 10px;
+  max-width: 700px;
+}
+
+.header {
+  font-weight: bold;
+  font-size: 40px;
+  font-style: italic;
+}
+
+.theme-toggle {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+}
+
+.theme-toggle mat-icon {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: inherit;
+  opacity: 0;
+  transform: translateX(-10px) rotate(0deg);
+  transition: all 0.8s ease-in-out;
+}
+
+.theme-toggle mat-icon.active {
+  opacity: 1;
+  transform: translateX(0) rotate(0deg);
+}
+
+.theme-toggle.rotating mat-icon.active {
+  transform: translateX(0) rotate(360deg);
+}
+
+body {
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+mat-toolbar,
+.mat-mdc-button,
+.theme-toggle,
+.header {
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+mat-toolbar,
+mat-tab-group,
+.mat-mdc-tab,
+.mat-mdc-tab-label,
+.mat-mdc-tab-header,
+.mat-mdc-tab-body-content,
+.mat-mdc-tab-body {
+  transition: background-color 0.8s ease, color 0.8s ease,
+    border-color 0.8s ease;
+}

@@ -1,0 +1,45 @@
+@use './custom-theme.scss';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.light-theme .theme-toggle.light-btn {
+  background-color: rgba(0, 0, 0, 0.171);
+  color: #5b0c8c;
+}
+
+.dark-theme .theme-toggle.dark-btn {
+  background-color: #18a5614e;
+  color: white;
+}
+
+.light-theme .theme-toggle.light-btn:hover {
+  background-color: #fb87fb;
+}
+
+.dark-theme .theme-toggle.dark-btn:hover {
+  background-color: #19c499;
+}
+
+.dark-theme .header.dark {
+  color: #36f3c3;
+}
+
+.light-theme .mat-mdc-tab-group {
+  background-color: white;
+  color: black;
+}
+
+.dark-theme .mat-mdc-tab-group {
+  background-color: #00452e;
+  color: white;
+}
+
+.mat-mdc-tab-group .mdc-tab__text-label {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}

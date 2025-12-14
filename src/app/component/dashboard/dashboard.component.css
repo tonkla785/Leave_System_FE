@@ -1,0 +1,9 @@
+.tab-card {
+  margin-top: 20px;
+  width: auto;
+  height: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 1px;
+}

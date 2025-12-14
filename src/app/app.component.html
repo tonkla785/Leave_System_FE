@@ -1,0 +1,31 @@
+<mat-toolbar color="primary">
+  <span class="header" [class.dark]="isDarkMode">
+    ระบบลางาน
+  </span>
+
+  <span class="example-spacer"></span>
+
+  <button mat-icon-button class="theme-toggle" [class.rotating]="isRotating" [class.light-btn]="!isDarkMode"
+    [class.dark-btn]="isDarkMode" (click)="toggleTheme()">
+    <mat-icon [class.active]="!isDarkMode">dark_mode</mat-icon>
+    <mat-icon [class.active]="isDarkMode">light_mode</mat-icon>
+  </button>
+</mat-toolbar>
+<div class="container">
+  <div class="tab-card">
+    <div class="tab-wrapper">
+      <mat-tab-group
+        color="primary"
+        (selectedTabChange)="onChange($event)"
+      >
+        <mat-tab label="แดชบอร์ด"></mat-tab>
+        <mat-tab label="ขอลางาน"></mat-tab>
+        <mat-tab label="ประวัติการลา"></mat-tab>
+        <mat-tab label="รายการขออนุมัติการลา"></mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+  <router-outlet />
+</div>
+
+
