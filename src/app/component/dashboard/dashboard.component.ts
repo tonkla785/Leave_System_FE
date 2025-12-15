@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { LeaveBalanceService } from '../../service/leave_balance.service';
 import { LeaveRequestService } from '../../service/leave_request.service';
@@ -12,26 +12,11 @@ import {
   LeaveType,
 } from '../../interface/data_interface';
 import { LeaveTypeService } from '../../service/leave_type.service';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'อนุมัติ' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'อนุมัติ' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'รออนุมัติ' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'รออนุมัติ' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'ไม่อนุมัติ' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'ไม่อนุมัติ' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'ไม่อนุมัติ' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'ไม่อนุมัติ' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'ไม่อนุมัติ' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'ไม่อนุมัติ' },
-];
+import { StatusClassPipe } from '../../pipe/status-class.pipe';
+import { ThDatePipe } from '../../pipe/th-date.pipe';
+import { MatSort } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
+import { calDateDiff } from '../../util/caldatediff';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,13 +27,19 @@ const ELEMENT_DATA: PeriodicElement[] = [
     MatIconModule,
     MatTableModule,
     StatusPipe,
+    StatusClassPipe,
+    ThDatePipe,
+    MatSortModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
-  displayedColumns: string[] = ['date', 'type', 'amount', 'status'];
-  dataSource = ELEMENT_DATA;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  displayedColumns: string[] = ['id', 'date', 'type', 'amount', 'status'];
+
+  dataSource = new MatTableDataSource<LeaveRequest>([]);
 
   dataRequest: LeaveRequest = {
     Id: undefined,
@@ -56,6 +47,7 @@ export class DashboardComponent {
     endDate: undefined,
     leaveStatus: '',
     leaveReason: '',
+    dayDiff:undefined,
     user: {
       Id: undefined,
       userName: '',
@@ -84,27 +76,55 @@ export class DashboardComponent {
     remainDay: undefined,
   };
 
-  dataRequestOP: LeaveRequest[] = [];
+  pendingData: number = 0;
   dataBalanceOP: LeaveBalance[] = [];
   dataTypeOP: LeaveType[] = [];
+
+  maxDay: number = 0;
+  sumLeaveDay: number = 0;
+  remainDay: number = 0;
 
   constructor(
     private balanceService: LeaveBalanceService,
     private requestService: LeaveRequestService,
     private leaveTypeService: LeaveTypeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.fetchRequest();
-    this.fetchBalance();
     this.fetchType();
+    this.fetchBalance();
+    this.fetchReqPending();
+    this.fetchRequest();
   }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      if (property === 'date') {
+        return new Date(item.startDate ?? '').getTime();
+      }
+      return (item as any)[property];
+    };
+
+    Promise.resolve().then(() => {
+      this.sort.active = 'id';
+      this.sort.direction = 'desc';
+    });
+  }
+
 
   fetchRequest() {
     this.requestService.getAllReq().subscribe({
       next: (res) => {
-        this.dataRequestOP = res.data ?? [];
-        console.log('Requests:', this.dataRequestOP);
+        const data = res.data ?? [];
+
+        data.forEach(item => {
+          item.dayDiff = calDateDiff(item.startDate, item.endDate);
+        });
+
+        this.dataSource.data = data;
+        console.log('Request:', this.dataSource.data);
       },
       error: (err) => console.error(err),
     });
@@ -114,6 +134,7 @@ export class DashboardComponent {
     this.balanceService.getBalance().subscribe({
       next: (res) => {
         this.dataBalanceOP = res.data ?? [];
+        this.calculateDayRemain();
         console.log('Balance:', this.dataBalanceOP);
       },
       error: (err) => console.error(err),
@@ -124,9 +145,41 @@ export class DashboardComponent {
     this.leaveTypeService.getType().subscribe({
       next: (res) => {
         this.dataTypeOP = res.data ?? [];
+        this.maxDay = this.sumMaxDay();
         console.log('Types:', this.dataTypeOP);
       },
       error: (err) => console.error(err),
     });
+  }
+
+  fetchReqPending() {
+    this.requestService.getStatusPending().subscribe({
+      next: (res) => {
+        this.pendingData = res.data?.length ?? 0;
+        console.log('Pending:', this.pendingData);
+      },
+      error: (err) => console.error(err)
+    })
+  }
+
+  sumMaxDay(): number {
+    let total = 0;
+
+    this.dataTypeOP.forEach(item => {
+      total += item.maxDay ?? 0;
+    });
+
+    return total;
+  }
+
+  calculateDayRemain(): void {
+    let total = 0;
+    let year = 0;
+    this.dataBalanceOP.forEach(item => {
+      total += item.remainDay ?? 0;
+      year += item.leaveYear ?? 0;
+    });
+    this.remainDay = this.maxDay - total;
+    this.sumLeaveDay = year;
   }
 }

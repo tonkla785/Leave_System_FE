@@ -27,6 +27,8 @@ export interface LeaveRequest {
   leaveReason: string;
   user: User;
   leaveTypeEntity: LeaveType;
+  
+  dayDiff?:number;
 }
 
 export interface LeaveBalance {

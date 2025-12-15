@@ -11,8 +11,8 @@ export class LeaveRequestService {
 
   private apiUrl = 'http://localhost:8080/leave-request';
 
-  getAllReq(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-all-req`);
+  getAllReq(): Observable<ApiResponse<LeaveRequest[]>> {
+    return this.http.get<ApiResponse<LeaveRequest[]>>(`${this.apiUrl}/get-all-req`);
   }
 
   getStatusPending(): Observable<ApiResponse<any>> {
