@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   <span class="header" [class.dark]="isDarkMode">
     ระบบลางาน
   </span>
@@ -12,7 +12,7 @@
   </button>
 </mat-toolbar>
 <div class="container">
-  <div class="tab-card">
+  <mat-card  class="tab-card">
     <div class="tab-wrapper">
       <mat-tab-group
         color="primary"
@@ -24,7 +24,7 @@
         <mat-tab label="รายการขออนุมัติการลา"></mat-tab>
       </mat-tab-group>
     </div>
-  </div>
+  </mat-card>
   <router-outlet />
 </div>
 

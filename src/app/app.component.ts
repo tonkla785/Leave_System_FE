@@ -5,14 +5,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
-
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatButtonModule, MatIconModule, MatButtonModule, MatTabsModule, MatToolbarModule],
+  imports: [
+    RouterOutlet,
+    MatButtonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatCardModule,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
   isDarkMode = false;
@@ -32,7 +40,7 @@ export class AppComponent {
     }, 800);
   }
 
-  onChange(event: MatTabChangeEvent){
+  onChange(event: MatTabChangeEvent) {
     const routes = ['', '/request-form', '/history', '/approve-request'];
     this.router.navigate([routes[event.index]]);
   }
