@@ -1,0 +1,189 @@
+.card {
+  margin-top: 20px;
+}
+
+.tab-card-detail {
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  padding: 0px;
+  justify-content: space-between;
+}
+
+.text-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.text-row-input {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 20px;
+  width: 100%;
+}
+
+.text-group-input-month {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.text-group-input-month .title {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+
+.text-group-input-month .value {
+  margin: 0;
+  font-size: 14px;
+  margin-top: 10px;
+  color: #555;
+}
+
+.text-group-input {
+  width: 100%;
+}
+
+.text-group-input .title {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+
+.text-group-input .value {
+  margin: 0;
+  font-size: 14px;
+  margin-top: 10px;
+  color: #555;
+}
+
+.text-group .title {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+.text-group .value {
+  margin: 0;
+  font-size: 14px;
+  margin-top: 10px;
+  color: #555;
+}
+
+.btn-excel {
+  background-color: rgb(48, 188, 48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 20px;
+}
+
+.btn-excel:hover {
+  background-color: rgb(38, 150, 38);
+  transform: scale(1.05);
+}
+
+.btn-excel:hover mat-icon {
+  transform: rotate(-10deg);
+}
+
+.btn-excel mat-icon {
+  transition: transform 0.3s ease;
+}
+
+.full-width {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+table {
+  width: 100%;
+}
+
+.group-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mat-mdc-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+.mat-mdc-table .mat-mdc-header-row {
+  background-color: #e4e4e42b !important;
+  color: #555 !important;
+}
+
+.list-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+  padding-left: 15px;
+}
+
+@media (max-width: 600px) {
+  .mat-mdc-table {
+    min-width: 0;
+  }
+
+  .mat-mdc-table .mat-mdc-cell,
+  .mat-mdc-table .mat-mdc-header-cell {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}
+
+.column-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.chart-container canvas {
+  max-width: 600px;
+  width: 100%;
+  max-height: 300px;
+  height: 300px;
+}

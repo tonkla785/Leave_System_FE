@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
 import { ShareDataService } from '../../service/share_data.service';
 import {
-  DataFromDashBoard,
   LeaveType,
   User,
   PayloadRequest,
 } from '../../interface/data_interface';
-import { UserService } from '../../service/user.service';
 import { LeaveRequestService } from '../../service/leave_request.service';
-import { LeaveTypeService } from '../../service/leave_type.service';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,9 +17,12 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
-import { Subscription } from 'rxjs';
 import { alertMessage } from '../../util/alertmessage';
 import { NgForm, NgModel } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { calDateDiff } from '../../util/caldatediff';
+
 
 @Component({
   selector: 'app-request-form',
@@ -48,7 +48,7 @@ export class RequestFormComponent {
   today = new Date();
 
   dataTypeOP: LeaveType[] = [];
-  userData: User[] = [];
+  userData: User | null = null;
 
   fromInput: PayloadRequest = {
     userId: undefined,
@@ -58,49 +58,41 @@ export class RequestFormComponent {
     reason: undefined,
   };
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private shareDataService: ShareDataService,
-    private userService: UserService,
-    private leaveRequestService: LeaveRequestService,
-    private leaveTypeService: LeaveTypeService
-  ) {}
-
-  shareData!: DataFromDashBoard;
-  private summarySub!: Subscription;
+    private leaveRequestService: LeaveRequestService
+  ) { }
 
   ngOnInit(): void {
-    this.fetchType();
-    this.fetchUser();
-    this.fetchSumFormDash();
+    this.subscribeDataTypes();
+    this.subscribeDataUser();
   }
 
   ngOnDestroy(): void {
-    this.summarySub.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  fetchType() {
-    this.leaveTypeService.getType().subscribe({
-      next: (res) => {
-        this.dataTypeOP = res.data ?? [];
-        console.log('Types:', this.dataTypeOP);
-      },
-      error: (err) => console.error(err),
-    });
+
+  subscribeDataTypes() {
+    this.shareDataService.types$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(types => {
+        this.dataTypeOP = types;
+      });
   }
 
-  fetchUser() {
-    this.userService.getUser(1).subscribe({
-      next: (res) => {
-        const user = res.data;
-        if (user) {
-          this.userData = [user];
-          this.fromInput.userId = user.id;
+  subscribeDataUser() {
+    this.shareDataService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(users => {
+        if (users) {
+          this.userData = users;
+          this.fromInput.userId = this.userData.id;
         }
-        console.log('User:', this.userData);
-        console.log('fromInput.userId:', this.fromInput.userId);
-      },
-      error: (err) => console.error(err),
-    });
+      });
   }
 
   submitLeave(
@@ -117,46 +109,37 @@ export class RequestFormComponent {
 
     if (form.invalid) return;
 
-    console.log('Payload to send:', this.fromInput);
-
     this.leaveRequestService.createRequest(this.fromInput).subscribe({
       next: (res) => {
-        this.clearScreen(form);
         alertMessage();
-        console.log('Leave submitted:', res);
+        this.clearScreen(form);
+        res.data.dayDiff = calDateDiff(
+          res.data.startDate,
+          res.data.endDate
+        );
+        this.shareDataService.addNewRequest(res.data);
       },
       error: (err) => console.error(err),
     });
   }
 
-  fetchSumFormDash() {
-    this.summarySub = this.shareDataService.summary$.subscribe((data) => {
-      this.shareData = data;
-      console.log('Summary from dashboard:', data);
-    });
-  }
-
-  cancelData(form: NgForm) {
-    this.clearScreen(form);
-  }
+  cancelData(form: NgForm) { this.clearScreen(form); }
 
   clearScreen(form?: NgForm) {
-    this.fromInput = {
-      userId: this.userData[0]?.id,
+    this.fromInput.leaveTypeId = undefined;
+    this.fromInput.startDate = undefined;
+    this.fromInput.endDate = undefined;
+    this.fromInput.reason = undefined;
+
+    form?.resetForm({
       leaveTypeId: undefined,
       startDate: undefined,
       endDate: undefined,
       reason: undefined,
-    };
+    });
 
-    if (form) {
-      form.resetForm({
-        userId: this.userData[0]?.id,
-        leaveTypeId: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        reason: undefined,
-      });
-    }
+    this.fromInput.userId = this.userData?.id;
   }
+
 }
+

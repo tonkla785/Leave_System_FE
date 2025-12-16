@@ -1,1 +1,96 @@
-<p>leave-history works!</p>
+<mat-card class="card">
+    <div class="tab-card-detail">
+        <div class="text-row">
+            <div class="text-group">
+                <p class="title">สถิติการลาประจำเดือน</p>
+                <p class="value">ข้อมูลการลาของพนักงานทั้งหมด</p>
+            </div>
+        </div>
+        <button class="btn-excel" (click)="exportExcel()"><mat-icon>download</mat-icon> Export Excel</button>
+    </div>
+</mat-card>
+
+<mat-card class="card">
+    <div class="tab-card-detail">
+        <div class="text-row-input">
+            <div class="text-group-input">
+                <label class="value">เลือกเดือน</label>
+                <mat-form-field appearance="outline" class="full-width">
+                    <input matInput [matDatepicker]="startPicker" [placeholder]="(date | date:'MMMM yyyy') ?? ''"
+                        [ngModel]="selectedMonth" (ngModelChange)="applyFilters()" readonly
+                        (click)="startPicker.open()" />
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker startView="multi-year"
+                        (monthSelected)="chosenMonthHandler($event, startPicker)" panelClass="month-picker"
+                        (yearSelected)="chosenYearHandler($event)"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="text-group-input-month">
+                <label class="value">แผนก</label>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-select [(ngModel)]="selectedDepartment" (selectionChange)="applyFilters()">
+                        <mat-option value="">ทั้งหมด</mat-option>
+                        <mat-option *ngFor="let dep of departments" [value]="dep">{{ dep }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+</mat-card>
+
+<mat-card class="card">
+    <div class="tab-card-detail column-layout">
+        <p class="list-text">สรุปรายการลาแยกตามประเภท</p>
+
+        <div class="chart-container">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+                [legend]="true" [type]="'bar'">
+            </canvas>
+        </div>
+    </div>
+</mat-card>
+
+
+<mat-card class="card">
+    <div class="group-table">
+        <p class="list-text">รายละเอียดการลารายบุคคล</p>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="userName">
+                <th mat-header-cell *matHeaderCellDef>ชื่อ-นามสกุล</th>
+                <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="department">
+                <th mat-header-cell *matHeaderCellDef>แผนก</th>
+                <td mat-cell *matCellDef="let element">{{ element.department }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="Sick">
+                <th mat-header-cell *matHeaderCellDef>ลาป่วย</th>
+                <td mat-cell *matCellDef="let element">{{ element.Sick }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="Vacation">
+                <th mat-header-cell *matHeaderCellDef>ลาพักร้อน</th>
+                <td mat-cell *matCellDef="let element">{{ element.Vacation }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="Personal">
+                <th mat-header-cell *matHeaderCellDef>ลากิจ</th>
+                <td mat-cell *matCellDef="let element">{{ element.Personal }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>รวม</th>
+                <td mat-cell *matCellDef="let element">{{ element.total }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">ไม่มีข้อมูล</td>
+            </tr>
+        </table>
+    </div>
+</mat-card>

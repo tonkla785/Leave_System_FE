@@ -32,22 +32,18 @@ export interface LeaveRequest {
 }
 
 export interface LeaveBalance {
-  id?: number;
-  leaveYear?: number;
+  id: number;
+  leaveYear: number;
+  remainDay: number;
+  userName: string;
+  leaveTypeName: string;
+}
+
+export interface PayloadBalance {
+  userId?: number;
+  leaveTypeId?: number;
+  year?: number;
   remainDay?: number;
-}
-
-export interface BodyBalance {
-  userId: number;
-  leaveTypeId: number;
-  year: number;
-  remainDay: number;
-}
-
-export interface DataFromDashBoard {
-  maxDay: number;
-  sumLeaveDay: number;
-  remainDay: number;
 }
 
 export interface PayloadRequest {
@@ -56,4 +52,11 @@ export interface PayloadRequest {
   startDate?: Date;
   endDate?: Date;
   reason?: string;
+}
+
+
+export interface DashboardSummary {
+  maxDay: number;
+  remainDay: number;
+  sumLeaveDay: number;
 }

@@ -35,11 +35,11 @@
     <div class="text-row">
       <div class="text-group-detail">
         <p class="title">วันที่เริ่มต้น</p>
-        <p class="value">{{ request.startDate }}</p>
+        <p class="value">{{ request.startDate | date:'yyyy-MM-dd'}}</p>
       </div>
       <div class="text-group-detail">
         <p class="title">วันที่สิ้นสุด</p>
-        <p class="value">{{ request.endDate }}</p>
+        <p class="value">{{ request.endDate | date:'yyyy-MM-dd'}}</p>
       </div>
     </div>
     <div class="text-row">
@@ -62,12 +62,14 @@
         <button
           type="button"
           class="btn-cancel"
+          (click)="rejectReq(request)"
         ><mat-icon>close_small</mat-icon>
           ไม่อนุมัติ
         </button>
         <button
           type="button"
           class="btn-submit"
+          (click)="confirmReq(request)"
         ><mat-icon>check_small</mat-icon>
           อนุมัติ
         </button>

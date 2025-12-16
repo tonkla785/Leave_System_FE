@@ -15,18 +15,6 @@ export class LeaveRequestService {
     return this.http.get<ApiResponse<LeaveRequest[]>>(`${this.apiUrl}/get-all-req`);
   }
 
-  getStatusPending(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-pending-req`);
-  }
-
-  getStatusApprove(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-approved-req`);
-  }
-
-  getStatusReject(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-reject-req`);
-  }
-
   createRequest(body: any): Observable<any> {
     return this.http.post<ApiResponse<any>>(
       `${this.apiUrl}/create-request`,

@@ -3,21 +3,18 @@ import { Component, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
-import { LeaveBalanceService } from '../../service/leave_balance.service';
-import { LeaveRequestService } from '../../service/leave_request.service';
 import { StatusPipe } from '../../pipe/status.pipe';
 import {
   LeaveBalance,
   LeaveRequest,
   LeaveType,
 } from '../../interface/data_interface';
-import { LeaveTypeService } from '../../service/leave_type.service';
 import { StatusClassPipe } from '../../pipe/status-class.pipe';
 import { ThDatePipe } from '../../pipe/th-date.pipe';
 import { MatSort } from '@angular/material/sort';
 import { MatSortModule } from '@angular/material/sort';
-import { calDateDiff } from '../../util/caldatediff';
 import { ShareDataService } from '../../service/share_data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,40 +34,35 @@ import { ShareDataService } from '../../service/share_data.service';
 })
 export class DashboardComponent {
   @ViewChild(MatSort) sort!: MatSort;
+  private sub = new Subscription();
 
   displayedColumns: string[] = ['id', 'date', 'type', 'amount', 'status'];
 
   dataSource = new MatTableDataSource<LeaveRequest>([]);
 
-  dataType: LeaveType = {
-    id: undefined,
-    typeName: '',
-    typeDescription: '',
-    maxDay: undefined,
-  };
-
-
-
   pendingData: number = 0;
-  dataBalanceOP: LeaveBalance[] = [];
-  dataTypeOP: LeaveType[] = [];
 
   maxDay: number = 0;
   sumLeaveDay: number = 0;
   remainDay: number = 0;
 
+  dataBalanceOP: LeaveBalance[] = [];
+  dataTypeOP: LeaveType[] = [];
+
   constructor(
-    private balanceService: LeaveBalanceService,
-    private requestService: LeaveRequestService,
-    private leaveTypeService: LeaveTypeService,
     private shareDataService: ShareDataService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.fetchType();
-    this.fetchBalance();
-    this.fetchReqPending();
-    this.fetchRequest();
+    this.subscribeDataRequests();
+    this.subscribeDataPending();
+    this.subscribeDataBalance();
+    this.subscribeDataTypes();
+    this.subscribeSummary();
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -86,81 +78,51 @@ export class DashboardComponent {
     Promise.resolve().then(() => {
       this.sort.active = 'id';
       this.sort.direction = 'desc';
+      this.sort.sortChange.emit();
     });
   }
 
-  fetchRequest() {
-    this.requestService.getAllReq().subscribe({
-      next: (res) => {
-        const data = res.data ?? [];
-
-        data.forEach((item) => {
-          item.dayDiff = calDateDiff(item.startDate, item.endDate);
-        });
-
+  subscribeDataRequests() {
+    this.sub.add(
+      this.shareDataService.requestAll$.subscribe(data => {
         this.dataSource.data = data;
-        console.log('Request:', this.dataSource.data);
-      },
-      error: (err) => console.error(err),
-    });
+
+        this.dataSource.sort = this.sort;
+      })
+    );
   }
 
-  fetchBalance() {
-    this.balanceService.getBalance().subscribe({
-      next: (res) => {
-        this.dataBalanceOP = res.data ?? [];
-        this.calculateDayRemain();
-        console.log('Balance:', this.dataBalanceOP);
-      },
-      error: (err) => console.error(err),
-    });
+  subscribeDataPending() {
+    this.sub.add(
+      this.shareDataService.requestPending$.subscribe(data => {
+        this.pendingData = data.length;
+      })
+    );
   }
 
-  fetchType() {
-    this.leaveTypeService.getType().subscribe({
-      next: (res) => {
-        this.dataTypeOP = res.data ?? [];
-        this.maxDay = this.sumMaxDay();
-        console.log('Types:', this.dataTypeOP);
-      },
-      error: (err) => console.error(err),
-    });
+  subscribeDataBalance() {
+    this.sub.add(
+      this.shareDataService.balance$.subscribe(data => {
+        this.dataBalanceOP = data;
+      })
+    );
   }
 
-  fetchReqPending() {
-    this.requestService.getStatusPending().subscribe({
-      next: (res) => {
-        this.pendingData = res.data?.length ?? 0;
-        console.log('Pending:', this.pendingData);
-      },
-      error: (err) => console.error(err),
-    });
+  subscribeDataTypes() {
+    this.sub.add(
+      this.shareDataService.types$.subscribe(data => {
+        this.dataTypeOP = data;
+      })
+    );
   }
 
-  sumMaxDay(): number {
-    let total = 0;
-
-    this.dataTypeOP.forEach((item) => {
-      total += item.maxDay ?? 0;
-    });
-
-    return total;
-  }
-
-  calculateDayRemain(): void {
-    let total = 0;
-    let year = 0;
-    this.dataBalanceOP.forEach((item) => {
-      total += item.remainDay ?? 0;
-      year += item.leaveYear ?? 0;
-    });
-    this.remainDay = this.maxDay - total;
-    this.sumLeaveDay = year;
-
-    this.shareDataService.setData({
-      maxDay: this.maxDay,
-      sumLeaveDay: this.sumLeaveDay,
-      remainDay: this.remainDay,
-    });
+  subscribeSummary() {
+    this.sub.add(
+      this.shareDataService.summary$.subscribe(summary => {
+        this.maxDay = summary.maxDay;
+        this.remainDay = summary.remainDay;
+        this.sumLeaveDay = summary.sumLeaveDay;
+      })
+    );
   }
 }

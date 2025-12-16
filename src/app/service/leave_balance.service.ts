@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiResponse, BodyBalance } from '../interface/data_interface';
+import { ApiResponse, PayloadBalance,  } from '../interface/data_interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,7 @@ export class LeaveBalanceService {
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-all-balance`);
   }
 
-  createBalance(body: BodyBalance): Observable<any> {
+  createBalance(body: PayloadBalance): Observable<any> {
     return this.http.post(`${this.apiUrl}/create-balance`, body);
   }
 }
