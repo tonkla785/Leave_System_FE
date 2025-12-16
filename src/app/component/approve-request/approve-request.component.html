@@ -1,1 +1,76 @@
-<p>approve-request works!</p>
+<mat-card class="tab-card">
+  <div class="text-row">
+    <div class="text-group">
+      <p class="title">รายการขออนุมัติการลา</p>
+      <p class="value">
+        รายการที่รออนุมัติทั้งหมด {{ this.pendingData }} รายการ
+      </p>
+    </div>
+  </div>
+</mat-card>
+
+<mat-card class="card" *ngFor="let request of dataRequest">
+  <div class="tab-card-detail">
+    <div class="text-row">
+      <div class="text-group">
+        <p class="title">{{ request.user.userName }}</p>
+        <p class="value">{{ request.user.userRole }}</p>
+      </div>
+    </div>
+    <p class="leave-status" [ngClass]="request.leaveStatus | statusClass">
+      {{ request.leaveStatus | status }}
+    </p>
+  </div>
+  <div class="detail">
+    <div class="text-row">
+      <div class="text-group-detail">
+        <p class="title">ประเภทการลา</p>
+        <p class="value">{{ request.leaveTypeEntity.typeDescription }}</p>
+      </div>
+      <div class="text-group-detail">
+        <p class="title">จำนวนวันลา</p>
+        <p class="value">{{ request.dayDiff }}</p>
+      </div>
+    </div>
+    <div class="text-row">
+      <div class="text-group-detail">
+        <p class="title">วันที่เริ่มต้น</p>
+        <p class="value">{{ request.startDate }}</p>
+      </div>
+      <div class="text-group-detail">
+        <p class="title">วันที่สิ้นสุด</p>
+        <p class="value">{{ request.endDate }}</p>
+      </div>
+    </div>
+    <div class="text-row">
+      <div class="text-group-detail">
+        <p class="title">เหตุผลการลา</p>
+        <p class="value">{{ request.leaveReason }}</p>
+      </div>
+    </div>
+    <div class="text-row">
+      <div class="text-group-detail">
+        <p class="title">
+          <mat-icon class="icon-chat">chat_info</mat-icon>ความคิดเห็น
+        </p>
+        <p class="value">
+          <textarea matInput rows="4" name="reason" placeholder="เพิ่มความคิดเห็น (ถ้ามี)"></textarea>
+        </p>
+      </div>
+    </div>
+      <div class="action-row">
+        <button
+          type="button"
+          class="btn-cancel"
+        ><mat-icon>close_small</mat-icon>
+          ไม่อนุมัติ
+        </button>
+        <button
+          type="button"
+          class="btn-submit"
+        ><mat-icon>check_small</mat-icon>
+          อนุมัติ
+        </button>
+      </div>
+  </div>
+</mat-card>

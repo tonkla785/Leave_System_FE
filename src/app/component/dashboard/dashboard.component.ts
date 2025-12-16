@@ -17,6 +17,7 @@ import { ThDatePipe } from '../../pipe/th-date.pipe';
 import { MatSort } from '@angular/material/sort';
 import { MatSortModule } from '@angular/material/sort';
 import { calDateDiff } from '../../util/caldatediff';
+import { ShareDataService } from '../../service/share_data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +30,7 @@ import { calDateDiff } from '../../util/caldatediff';
     StatusPipe,
     StatusClassPipe,
     ThDatePipe,
-    MatSortModule
+    MatSortModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -41,40 +42,14 @@ export class DashboardComponent {
 
   dataSource = new MatTableDataSource<LeaveRequest>([]);
 
-  dataRequest: LeaveRequest = {
-    Id: undefined,
-    startDate: undefined,
-    endDate: undefined,
-    leaveStatus: '',
-    leaveReason: '',
-    dayDiff:undefined,
-    user: {
-      Id: undefined,
-      userName: '',
-      userEmail: '',
-      userRole: '',
-      userDepartment: '',
-    },
-    leaveTypeEntity: {
-      Id: undefined,
-      typeName: '',
-      typeDescription: '',
-      maxDay: undefined,
-    },
-  };
-
   dataType: LeaveType = {
-    Id: undefined,
+    id: undefined,
     typeName: '',
     typeDescription: '',
     maxDay: undefined,
   };
 
-  dataBalance: LeaveBalance = {
-    Id: undefined,
-    leaveYear: undefined,
-    remainDay: undefined,
-  };
+
 
   pendingData: number = 0;
   dataBalanceOP: LeaveBalance[] = [];
@@ -87,8 +62,9 @@ export class DashboardComponent {
   constructor(
     private balanceService: LeaveBalanceService,
     private requestService: LeaveRequestService,
-    private leaveTypeService: LeaveTypeService
-  ) { }
+    private leaveTypeService: LeaveTypeService,
+    private shareDataService: ShareDataService
+  ) {}
 
   ngOnInit(): void {
     this.fetchType();
@@ -113,13 +89,12 @@ export class DashboardComponent {
     });
   }
 
-
   fetchRequest() {
     this.requestService.getAllReq().subscribe({
       next: (res) => {
         const data = res.data ?? [];
 
-        data.forEach(item => {
+        data.forEach((item) => {
           item.dayDiff = calDateDiff(item.startDate, item.endDate);
         });
 
@@ -158,14 +133,14 @@ export class DashboardComponent {
         this.pendingData = res.data?.length ?? 0;
         console.log('Pending:', this.pendingData);
       },
-      error: (err) => console.error(err)
-    })
+      error: (err) => console.error(err),
+    });
   }
 
   sumMaxDay(): number {
     let total = 0;
 
-    this.dataTypeOP.forEach(item => {
+    this.dataTypeOP.forEach((item) => {
       total += item.maxDay ?? 0;
     });
 
@@ -175,11 +150,17 @@ export class DashboardComponent {
   calculateDayRemain(): void {
     let total = 0;
     let year = 0;
-    this.dataBalanceOP.forEach(item => {
+    this.dataBalanceOP.forEach((item) => {
       total += item.remainDay ?? 0;
       year += item.leaveYear ?? 0;
     });
     this.remainDay = this.maxDay - total;
     this.sumLeaveDay = year;
+
+    this.shareDataService.setData({
+      maxDay: this.maxDay,
+      sumLeaveDay: this.sumLeaveDay,
+      remainDay: this.remainDay,
+    });
   }
 }

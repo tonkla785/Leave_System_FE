@@ -5,7 +5,7 @@ export interface ApiResponse<T> {
 }
 
 export interface User {
-  Id?: number;
+  id?: number;
   userName: string;
   userEmail: string;
   userRole: string;
@@ -13,34 +13,47 @@ export interface User {
 }
 
 export interface LeaveType {
-  Id?: number ;
+  id?: number;
   typeName: string;
   typeDescription: string;
-  maxDay?:number;
+  maxDay?: number;
 }
 
 export interface LeaveRequest {
-  Id?: number;
+  id?: number;
   startDate?: Date;
   endDate?: Date;
   leaveStatus: string;
   leaveReason: string;
   user: User;
   leaveTypeEntity: LeaveType;
-  
-  dayDiff?:number;
+
+  dayDiff?: number;
 }
 
 export interface LeaveBalance {
-  Id?: number;
+  id?: number;
   leaveYear?: number;
   remainDay?: number;
-  
 }
 
 export interface BodyBalance {
   userId: number;
   leaveTypeId: number;
   year: number;
-  remainDay:number;
+  remainDay: number;
+}
+
+export interface DataFromDashBoard {
+  maxDay: number;
+  sumLeaveDay: number;
+  remainDay: number;
+}
+
+export interface PayloadRequest {
+  userId?: number;
+  leaveTypeId?: number;
+  startDate?: Date;
+  endDate?: Date;
+  reason?: string;
 }

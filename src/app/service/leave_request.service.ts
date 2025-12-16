@@ -27,7 +27,7 @@ export class LeaveRequestService {
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-reject-req`);
   }
 
-  createRequest(body: LeaveRequest): Observable<any> {
+  createRequest(body: any): Observable<any> {
     return this.http.post<ApiResponse<any>>(
       `${this.apiUrl}/create-request`,
       body

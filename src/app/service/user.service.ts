@@ -12,8 +12,8 @@ export class UserService {
   private apiUrl = 'http://localhost:8080/user';
 
   getUser(id: number): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(
-      `${this.apiUrl}/user/get-user/${id}`
-    );
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/get-user`, {
+      params: { id: id.toString() },
+    });
   }
 }

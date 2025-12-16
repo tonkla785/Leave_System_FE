@@ -1,1 +1,132 @@
-<p>request-form works!</p>
+<div class="card-container">
+  <mat-card class="tab-card">
+    <div class="text-row">
+      <mat-icon class="icon-calender">calendar_today</mat-icon>
+      <p class="title">แบบฟอร์มขอลางาน</p>
+    </div>
+
+    <form
+      #leaveForm="ngForm"
+      class="leave-form"
+      (ngSubmit)="
+        submitLeave(
+          leaveForm,
+          leaveTypeCtrl,
+          startDateCtrl,
+          endDateCtrl,
+          reasonCtrl
+        )
+      "
+    >
+      <div class="form-group">
+        <label class="form-label">ประเภทการลา</label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select
+            placeholder="เลือกประเภทการลา"
+            [(ngModel)]="fromInput.leaveTypeId"
+            name="leaveType"
+            required
+            #leaveTypeCtrl="ngModel"
+          >
+            <mat-option *ngFor="let type of dataTypeOP" [value]="type.id">
+              {{ type.typeDescription }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="leaveTypeCtrl.invalid && leaveTypeCtrl.touched">
+            กรุณาเลือกประเภทการลา
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="date-grid">
+        <div class="form-group">
+          <label class="form-label">วันที่เริ่มต้น</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <input
+              matInput
+              [matDatepicker]="startPicker"
+              placeholder="mm/dd/yyyy"
+              [(ngModel)]="fromInput.startDate"
+              name="startDate"
+              required
+              #startDateCtrl="ngModel"
+              [min]="today"
+              readonly
+              (click)="startPicker.open()"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="startPicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            <mat-error *ngIf="startDateCtrl.invalid && startDateCtrl.touched">
+              กรุณาเลือกวันที่เริ่มต้น
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">วันที่สิ้นสุด</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <input
+              matInput
+              [matDatepicker]="endPicker"
+              placeholder="mm/dd/yyyy"
+              [(ngModel)]="fromInput.endDate"
+              name="endDate"
+              required
+              readonly
+              (click)="endPicker.open()"
+              #endDateCtrl="ngModel"
+              [min]="today"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="endPicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            <mat-error *ngIf="endDateCtrl.invalid && endDateCtrl.touched">
+              กรุณาเลือกวันที่สิ้นสุด
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">เหตุผลการลา</label>
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea
+            matInput
+            rows="4"
+            [(ngModel)]="fromInput.reason"
+            name="reason"
+            required
+            #reasonCtrl="ngModel"
+          ></textarea>
+          <mat-error *ngIf="reasonCtrl.invalid && reasonCtrl.touched">
+            กรุณากรอกเหตุผลการลา
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="action-row">
+        <button
+          mat-stroked-button
+          type="button"
+          class="btn-cancel"
+          (click)="cancelData(leaveForm)"
+        >
+          ยกเลิก
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="btn-submit"
+        >
+          ส่งคำขอลา
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
