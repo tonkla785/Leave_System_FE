@@ -85,10 +85,6 @@ export class ShareDataService {
     this._balance$.next(data);
   }
 
-  addBalance(item: LeaveBalance) {
-    this._balance$.next([...this._balance$.value, item]);
-  }
-
   setAllRequest(data: LeaveRequest[]) {
     this._requestAll$.next(data);
   }

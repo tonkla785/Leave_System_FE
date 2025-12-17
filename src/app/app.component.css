@@ -8,6 +8,20 @@
   padding: 24px;
 }
 
+.light-theme .container {
+  background-color: #e3e4e5;
+  min-height: 100vh;
+  padding: 24px;
+  color: black;
+}
+
+.dark-theme .container {
+  background-color: #36634e;
+  min-height: 100vh;
+  padding: 24px;
+  color: white;
+}
+
 .tab-card {
   width: auto;
   height: auto;
@@ -24,7 +38,6 @@
 .header {
   font-weight: bold;
   font-size: 40px;
-  font-style: italic;
 }
 
 .theme-toggle {
