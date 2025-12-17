@@ -219,3 +219,11 @@ table {
   border: none;
   background-color: transparent;
 }
+
+::ng-deep .fc .fc-daygrid-day-frame {
+  background-color: #ececec;
+}
+
+:host-context(.dark-theme) ::ng-deep .fc .fc-daygrid-day-frame {
+  background-color: #2c2c2c;
+}
