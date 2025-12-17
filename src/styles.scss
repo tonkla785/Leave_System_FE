@@ -73,3 +73,24 @@ html, body {
 .dark-theme .container *:not(::ng-deep .fc .fc-daygrid-day-number):not(::ng-deep .fc .fc-daygrid-day-top) {
   color: white !important;
 }
+
+body,
+mat-toolbar,
+.mat-mdc-button,
+.theme-toggle,
+.header,
+mat-tab-group,
+.mat-mdc-tab,
+.mat-mdc-tab-label,
+.mat-mdc-tab-header,
+.mat-mdc-tab-body-content,
+.mat-mdc-tab-body,
+.mat-card,
+.container,
+table,
+td,
+th,
+.full-calendar,
+.fc {
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
+}
