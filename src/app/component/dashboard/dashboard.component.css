@@ -178,7 +178,7 @@ table {
   padding: 20px;
 }
 
-::ng-deep .fc-scroller-harness{
+::ng-deep .fc-scroller-harness {
   border: none !important;
 }
 
