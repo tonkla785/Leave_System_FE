@@ -6,7 +6,7 @@ project to manager leave data user
 
 ## Features
 
-| Addon           |  Check List   |
+| Add on           |  Check List   |
 | --------------- | --- |
 | Responsive      | ✔️  |
 | Dark Mode       | ✔️  |
